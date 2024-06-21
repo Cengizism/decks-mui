@@ -3,7 +3,7 @@ import { Box, Container, Typography } from "@mui/material";
 export function Footer() {
   return (
     <footer>
-      <Container maxWidth="lg">
+      <Container>
         <Box
           sx={{
             my: 4,
