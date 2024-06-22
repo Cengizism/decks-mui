@@ -1,5 +1,4 @@
 import * as React from "react";
-import Footer from "@/app/_components/footer";
 import { HOME_OG_IMAGE_URL } from "@/lib/constants";
 import type { Metadata } from "next";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
@@ -60,10 +59,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           <ThemeProvider theme={theme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
-            <Main>
-              {props.children}
-            </Main>
-            <Footer />
+            <Main>{props.children}</Main>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

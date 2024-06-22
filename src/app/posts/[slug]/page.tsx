@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllPosts, getPostBySlug } from "@/lib/api";
 import markdownToHtml from "@/lib/markdownToHtml";
-import { PostBody } from "@/app/_components/post-body";
-import { PostHeader } from "@/app/_components/post-header";
+import { PostBody } from "@/app/_components/post/post-body";
+import { PostHeader } from "@/app/_components/post/post-header";
 import { Typography } from "@mui/material";
 
 export default async function Post({ params }: Params) {
