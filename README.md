@@ -34,4 +34,5 @@ pnpm dev
 Some additional notes..
 
 ## TODOS
+- Site url ffrom environment variable needs generalization
 - Install `eslint` and `prettier` for code formatting
