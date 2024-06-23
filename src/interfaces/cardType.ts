@@ -1,4 +1,4 @@
-export type Post = {
+export type CardType = {
   slug: string;
   title: string;
   coverImage: string;

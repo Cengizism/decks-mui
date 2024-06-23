@@ -1,13 +1,13 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllPosts, getPostBySlug } from "@/lib/api";
+import { getAllCards, getCardBySlug } from "@/lib/api";
 import markdownToHtml from "@/lib/markdownToHtml";
 import { Typography, Stack } from "@mui/material";
 import CoverImage from "@/app/components/cover-image";
 import markdownStyles from "../../../styles/markdown-styles.module.css";
 
-export default async function Post({ params }: Params) {
-  const post = getPostBySlug(params.slug);
+export default async function Card({ params }: Params) {
+  const post = getCardBySlug(params.slug);
 
   if (!post) {
     return notFound();
@@ -37,7 +37,7 @@ type Params = {
 };
 
 export function generateMetadata({ params }: Params): Metadata {
-  const post = getPostBySlug(params.slug);
+  const post = getCardBySlug(params.slug);
 
   if (!post) {
     return notFound();
@@ -55,7 +55,7 @@ export function generateMetadata({ params }: Params): Metadata {
 }
 
 export async function generateStaticParams() {
-  const posts = getAllPosts();
+  const posts = getAllCards();
 
   return posts.map((post) => ({
     slug: post.slug,

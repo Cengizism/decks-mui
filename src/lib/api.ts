@@ -1,26 +1,26 @@
-import { Post } from "@/interfaces/post";
+import { CardType } from "@/interfaces/cardType";
 import fs from "fs";
 import matter from "gray-matter";
 import { join } from "path";
 
 const postsDirectory = join(process.cwd(), "content");
 
-export function getPostSlugs() {
+export function getCardSlugs() {
   return fs.readdirSync(postsDirectory);
 }
 
-export function getPostBySlug(slug: string) {
+export function getCardBySlug(slug: string) {
   const realSlug = slug.replace(/\.mdx$/, "");
   const fullPath = join(postsDirectory, `${realSlug}.mdx`);
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
-  return { ...data, slug: realSlug, content } as Post;
+  return { ...data, slug: realSlug, content } as CardType;
 }
 
-export function getAllPosts(): Post[] {
-  const slugs = getPostSlugs();
+export function getAllCards(): CardType[] {
+  const slugs = getCardSlugs();
   const posts = slugs
-    .map((slug) => getPostBySlug(slug))
+    .map((slug) => getCardBySlug(slug))
   return posts;
 }

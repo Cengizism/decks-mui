@@ -1,5 +1,5 @@
 import * as React from "react";
-import { getAllPosts } from "@/lib/api";
+import { getAllCards } from "@/lib/api";
 import {
   Card,
   CardActionArea,
@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 export default function Index() {
-  const allPosts = getAllPosts();
+  const allPosts = getAllCards();
 
   return (
     <Stack spacing={4}>
@@ -22,7 +22,7 @@ export default function Index() {
           {allPosts.map((post, index) => {
             return (
               <Card key={index}>
-                <CardActionArea href={`/posts/${post.slug}`}>
+                <CardActionArea href={`/card/${post.slug}`}>
                   <CardHeader
                     title={post.title}
                     titleTypographyProps={{
