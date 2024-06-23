@@ -9,6 +9,7 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
+import NextLink from "next/link";
 
 export default function Index() {
   const allCards = getAllCards();
@@ -29,6 +30,7 @@ export default function Index() {
                 >
                   <CardActionArea
                     href={`/card/${card.slug}`}
+                    component={NextLink}
                     sx={{
                       zIndex: 1,
                     }}

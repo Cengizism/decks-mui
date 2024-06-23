@@ -18,6 +18,7 @@ export default async function Card({ params }: Params) {
   return (
     <Stack spacing={4}>
       <Typography variant="h2">{card.title}</Typography>
+      <Typography variant="body1">{card.deck}</Typography>
 
       <article>
         <CoverImage title={card.title} src={card.coverImage} />

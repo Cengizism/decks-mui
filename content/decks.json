@@ -1,0 +1,14 @@
+[
+  {
+    "folderName": "deck-1",
+    "title": "Deck 1",
+    "description": "This is the first deck",
+    "cards": ["card-1", "card-2"]
+  },
+  {
+    "folderName": "deck-2",
+    "title": "Deck 2",
+    "description": "This is the second deck",
+    "cards": ["card-3"]
+  }
+]

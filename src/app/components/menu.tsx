@@ -13,7 +13,12 @@ import InfoIcon from "@mui/icons-material/Info";
 export default function Menu({ open }: { open: boolean }) {
   return (
     <List>
-      <ListItem disablePadding sx={{ display: "block" }}>
+      <ListItem
+        disablePadding
+        sx={{
+          display: "block",
+        }}
+      >
         <ListItemButton
           href="/"
           component={NextLink}
@@ -32,11 +37,21 @@ export default function Menu({ open }: { open: boolean }) {
           >
             <StyleIcon />
           </ListItemIcon>
-          <ListItemText primary="Decks" sx={{ opacity: open ? 1 : 0 }} />
+          <ListItemText
+            primary="Decks"
+            sx={{
+              opacity: open ? 1 : 0,
+            }}
+          />
         </ListItemButton>
       </ListItem>
 
-      <ListItem disablePadding sx={{ display: "block" }}>
+      <ListItem
+        disablePadding
+        sx={{
+          display: "block",
+        }}
+      >
         <ListItemButton
           href="/about"
           component={NextLink}
@@ -55,7 +70,12 @@ export default function Menu({ open }: { open: boolean }) {
           >
             <InfoIcon />
           </ListItemIcon>
-          <ListItemText primary="About" sx={{ opacity: open ? 1 : 0 }} />
+          <ListItemText
+            primary="About"
+            sx={{
+              opacity: open ? 1 : 0,
+            }}
+          />
         </ListItemButton>
       </ListItem>
     </List>
