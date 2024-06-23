@@ -7,20 +7,20 @@ import CoverImage from "@/app/components/cover-image";
 import markdownStyles from "../../../styles/markdown-styles.module.css";
 
 export default async function Card({ params }: Params) {
-  const post = getCardBySlug(params.slug);
+  const card = getCardBySlug(params.slug);
 
-  if (!post) {
+  if (!card) {
     return notFound();
   }
 
-  const content = await markdownToHtml(post.content || "");
+  const content = await markdownToHtml(card.content || "");
 
   return (
     <Stack spacing={4}>
-      <Typography variant="h2">{post.title}</Typography>
+      <Typography variant="h2">{card.title}</Typography>
 
       <article>
-        <CoverImage title={post.title} src={post.coverImage} />
+        <CoverImage title={card.title} src={card.coverImage} />
         <div
           className={markdownStyles["markdown"]}
           dangerouslySetInnerHTML={{ __html: content }}
@@ -37,27 +37,27 @@ type Params = {
 };
 
 export function generateMetadata({ params }: Params): Metadata {
-  const post = getCardBySlug(params.slug);
+  const card = getCardBySlug(params.slug);
 
-  if (!post) {
+  if (!card) {
     return notFound();
   }
 
-  const title = `${post.title} | Next.js based content platform`;
+  const title = `${card.title} | Next.js based content platform`;
 
   return {
     title,
     openGraph: {
       title,
-      images: [post.ogImage.url],
+      images: [card.ogImage.url],
     },
   };
 }
 
 export async function generateStaticParams() {
-  const posts = getAllCards();
+  const cards = getAllCards();
 
-  return posts.map((post) => ({
-    slug: post.slug,
+  return cards.map((card) => ({
+    slug: card.slug,
   }));
 }

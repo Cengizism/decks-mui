@@ -3,7 +3,6 @@ import { getAllCards } from "@/lib/api";
 import {
   Card,
   CardActionArea,
-  CardContent,
   CardHeader,
   CardMedia,
   Stack,
@@ -11,20 +10,20 @@ import {
 } from "@mui/material";
 
 export default function Index() {
-  const allPosts = getAllCards();
+  const allCards = getAllCards();
 
   return (
     <Stack spacing={4}>
       <Typography variant="h2">Decks</Typography>
 
-      {allPosts.length > 0 && (
+      {allCards.length > 0 && (
         <Stack direction="row" gap={4}>
-          {allPosts.map((post, index) => {
+          {allCards.map((card, index) => {
             return (
               <Card key={index}>
-                <CardActionArea href={`/card/${post.slug}`}>
+                <CardActionArea href={`/card/${card.slug}`}>
                   <CardHeader
-                    title={post.title}
+                    title={card.title}
                     titleTypographyProps={{
                       sx: {
                         fontSize: "1.2rem",
@@ -35,14 +34,9 @@ export default function Index() {
                   <CardMedia
                     component="img"
                     height="194"
-                    image={post.coverImage}
-                    alt={post.title}
+                    image={card.coverImage}
+                    alt={card.title}
                   />
-                  <CardContent>
-                    <Typography variant="body2" color="text.secondary">
-                      {post.excerpt}
-                    </Typography>
-                  </CardContent>
                 </CardActionArea>
               </Card>
             );

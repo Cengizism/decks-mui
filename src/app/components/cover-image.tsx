@@ -19,7 +19,7 @@ const CoverImage = ({ title, src, slug }: Props) => {
   return (
     <div>
       {slug ? (
-        <Link href={`/posts/${slug}`} aria-label={title}>
+        <Link href={`/card/${slug}`} aria-label={title}>
           {image}
         </Link>
       ) : (
