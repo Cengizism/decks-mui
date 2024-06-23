@@ -1,5 +1,5 @@
 import * as React from "react";
-import { HOME_OG_IMAGE_URL } from "@/lib/constants";
+import { TITLE, DESCRIPTION, HOME_OG_IMAGE_URL } from "@/lib/constants";
 import type { Metadata } from "next";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
@@ -10,9 +10,9 @@ import Main from "./main";
 export const metadata: Metadata = {
   // TODO: "metadataBase" needs to be updated with env variables
   // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
-  metadataBase: new URL("http://localhost:3000"),
-  title: `Alten Decks`,
-  description: `A statically generated learning platform using Next.js.`,
+  metadataBase: process.env.SITE_URL ? new URL(process.env.SITE_URL) : undefined,
+  title: TITLE,
+  description: DESCRIPTION,
   openGraph: {
     images: [HOME_OG_IMAGE_URL],
   },

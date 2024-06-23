@@ -12,7 +12,6 @@ const CoverImage = ({ title, src, slug }: Props) => {
     <Image
       src={src}
       alt={`Cover Image for ${title}`}
-      layout="responsive"
       width={1240}
       height={620}
     />
