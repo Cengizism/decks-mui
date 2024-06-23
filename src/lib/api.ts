@@ -1,32 +1,26 @@
-import { CardType } from "@/interfaces/cardType";
-import fs from "fs";
-// @ts-ignore
-import matter from "gray-matter"; // TODO: Fix this
 import { join } from "path";
+import fs from "fs";
+import matter from "gray-matter";
 import decks from "../../content/decks.json";
+import { CardType, CardSlugType, DeckType } from "@/interfaces/types";
 
 const contentDirectory = join(process.cwd(), "content");
 
-export function getCardSlugs() {
-  let cardSlugsWithDeck: any = []; // TODO: Fix type any
-
-  decks.forEach((deck: { folderName: string; }) => {
-    const deckPath = join(contentDirectory, deck.folderName);
-    const slugs = fs.readdirSync(deckPath).map((slug: string) => ({
+export function getCardSlugs(): CardSlugType[] {
+  return decks.flatMap(({ folderName }) => {
+    const deckPath = join(contentDirectory, folderName);
+    return fs.readdirSync(deckPath).map(slug => ({
       slug,
-      deck: deck.folderName
+      deck: folderName
     }));
-    cardSlugsWithDeck = [...cardSlugsWithDeck, ...slugs];
   });
-
-  return cardSlugsWithDeck;
 }
 
 function findDeckByCardSlug(slug: string): string | undefined {
-  return decks.find(deck => deck.cards.includes(slug))?.folderName;
+  return decks.find((deck: DeckType) => deck.cards.includes(slug))?.folderName;
 }
 
-export function getCardBySlug(slug: string) {
+export function getCardBySlug(slug: string): CardType | null {
   if (!slug) {
     console.error('Invalid slug parameter:', { slug });
     return null;
@@ -34,6 +28,10 @@ export function getCardBySlug(slug: string) {
 
   const realSlug = slug.replace(/\.mdx$/, "");
   const deck = findDeckByCardSlug(realSlug);
+  if (!deck) {
+    console.error('Deck not found for slug:', { slug });
+    return null;
+  }
   const fullPath = join(contentDirectory, deck, `${realSlug}.mdx`);
 
   try {
@@ -47,7 +45,5 @@ export function getCardBySlug(slug: string) {
 }
 
 export function getAllCards(): CardType[] {
-  const slugsWithDeck = getCardSlugs();
-  const cards = slugsWithDeck.map(({ slug, deck }: { slug: string, deck: string }) => getCardBySlug(slug));
-  return cards;
+  return getCardSlugs().map(({ slug }) => getCardBySlug(slug)).filter(card => card !== null) as CardType[];
 }
