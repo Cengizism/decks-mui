@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllPosts, getPostBySlug } from "@/lib/api";
 import markdownToHtml from "@/lib/markdownToHtml";
-import { PostBody } from "@/app/_components/post/post-body";
-import { PostHeader } from "@/app/_components/post/post-header";
-import { Typography } from "@mui/material";
+import { Typography, Stack } from "@mui/material";
+import CoverImage from "@/app/components/cover-image";
+import markdownStyles from "../../../styles/markdown-styles.module.css";
 
 export default async function Post({ params }: Params) {
   const post = getPostBySlug(params.slug);
@@ -16,19 +16,17 @@ export default async function Post({ params }: Params) {
   const content = await markdownToHtml(post.content || "");
 
   return (
-    <>
+    <Stack spacing={4}>
       <Typography variant="h2">{post.title}</Typography>
 
       <article>
-        <PostHeader
-          title={post.title}
-          coverImage={post.coverImage}
-          date={post.date}
-          author={post.author}
+        <CoverImage title={post.title} src={post.coverImage} />
+        <div
+          className={markdownStyles["markdown"]}
+          dangerouslySetInnerHTML={{ __html: content }}
         />
-        <PostBody content={content} />
       </article>
-    </>
+    </Stack>
   );
 }
 

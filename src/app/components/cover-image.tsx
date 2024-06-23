@@ -12,12 +12,13 @@ const CoverImage = ({ title, src, slug }: Props) => {
     <Image
       src={src}
       alt={`Cover Image for ${title}`}
-      width={1300}
-      height={630}
+      layout="responsive"
+      width={1240}
+      height={620}
     />
   );
   return (
-    <div className="sm:mx-0">
+    <div>
       {slug ? (
         <Link href={`/posts/${slug}`} aria-label={title}>
           {image}

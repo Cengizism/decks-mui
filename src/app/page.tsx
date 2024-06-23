@@ -1,18 +1,54 @@
 import * as React from "react";
-import { Deck } from "@/app/_components/deck/deck";
 import { getAllPosts } from "@/lib/api";
-import { Stack, Typography } from "@mui/material";
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 export default function Index() {
   const allPosts = getAllPosts();
 
   return (
-    <>
+    <Stack spacing={4}>
       <Typography variant="h2">Decks</Typography>
 
-      <Stack spacing={4}>
-        <Deck posts={allPosts} />
-      </Stack>
-    </>
+      {allPosts.length > 0 && (
+        <Stack direction="row" gap={4}>
+          {allPosts.map((post, index) => {
+            return (
+              <Card key={index}>
+                <CardActionArea href={`/posts/${post.slug}`}>
+                  <CardHeader
+                    title={post.title}
+                    titleTypographyProps={{
+                      sx: {
+                        fontSize: "1.2rem",
+                        fontWeight: "bold",
+                      },
+                    }}
+                  />
+                  <CardMedia
+                    component="img"
+                    height="194"
+                    image={post.coverImage}
+                    alt={post.title}
+                  />
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary">
+                      {post.excerpt}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            );
+          })}
+        </Stack>
+      )}
+    </Stack>
   );
 }
