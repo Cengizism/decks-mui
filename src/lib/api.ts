@@ -16,8 +16,13 @@ export function getCardSlugs(): CardSlugType[] {
   });
 }
 
-function findDeckByCardSlug(slug: string): string | undefined {
+function findDeckFolderNameByCardSlug(slug: string): string | undefined {
   return decks.find((deck: DeckType) => deck.cards.includes(slug))?.folderName;
+}
+
+export function getDeckTitle(folderName: string): string | undefined {
+  const deck = decks.find((deck: DeckType) => deck.folderName === folderName);
+  return deck?.title;
 }
 
 export function getCardBySlug(slug: string): CardType | null {
@@ -27,7 +32,7 @@ export function getCardBySlug(slug: string): CardType | null {
   }
 
   const realSlug = slug.replace(/\.mdx$/, "");
-  const deck = findDeckByCardSlug(realSlug);
+  const deck = findDeckFolderNameByCardSlug(realSlug);
   if (!deck) {
     console.error('Deck not found for slug:', { slug });
     return null;

@@ -1,10 +1,11 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllCards, getCardBySlug } from "@/lib/api";
+import { getAllCards, getCardBySlug, getDeckTitle } from "@/lib/api";
 import markdownToHtml from "@/lib/markdownToHtml";
-import { Typography, Stack } from "@mui/material";
+import { Typography, Stack, Breadcrumbs, Link } from "@mui/material";
 import CoverImage from "@/app/components/cover-image";
 import markdownStyles from "../../../styles/markdown-styles.module.css";
+import { get } from "http";
 
 export default async function Card({ params }: Params) {
   const card = getCardBySlug(params.slug);
@@ -18,7 +19,16 @@ export default async function Card({ params }: Params) {
   return (
     <Stack spacing={4}>
       <Typography variant="h2">{card.title}</Typography>
-      <Typography variant="body1">{card.deck}</Typography>
+    
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link underline="hover" color="inherit" href="/">
+          Home
+        </Link>
+        <Link underline="hover" color="inherit" href={`/deck/${card.deck}`}>
+          {getDeckTitle(card.deck)}
+        </Link>
+        <Typography color="text.primary">{card.title}</Typography>
+      </Breadcrumbs>
 
       <article>
         <CoverImage title={card.title} src={card.coverImage} />
