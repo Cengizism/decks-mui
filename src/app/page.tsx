@@ -7,6 +7,7 @@ import {
   CardMedia,
   Stack,
   Typography,
+  Grid,
 } from "@mui/material";
 
 export default function Index() {
@@ -17,31 +18,55 @@ export default function Index() {
       <Typography variant="h2">Decks</Typography>
 
       {allCards.length > 0 && (
-        <Stack direction="row" gap={4}>
+        <Grid container spacing={4}>
           {allCards.map((card, index) => {
             return (
-              <Card key={index}>
-                <CardActionArea href={`/card/${card.slug}`}>
-                  <CardHeader
-                    title={card.title}
-                    titleTypographyProps={{
-                      sx: {
-                        fontSize: "1.2rem",
-                        fontWeight: "bold",
-                      },
+              <Grid item key={index} xs={4}>
+                <Card
+                  sx={{
+                    minHeight: { xs: 300, sm: 400 },
+                  }}
+                >
+                  <CardActionArea
+                    href={`/card/${card.slug}`}
+                    sx={{
+                      zIndex: 1,
                     }}
-                  />
-                  <CardMedia
-                    component="img"
-                    height="194"
-                    image={card.coverImage}
-                    alt={card.title}
-                  />
-                </CardActionArea>
-              </Card>
+                  >
+                    <CardHeader
+                      title={card.title}
+                      titleTypographyProps={{
+                        sx: {
+                          fontSize: "1.2rem",
+                          fontWeight: "bold",
+                          color: "white",
+                        },
+                      }}
+                      sx={{
+                        position: "relative",
+                        zIndex: 1,
+                      }}
+                    />
+                    <CardMedia
+                      component="img"
+                      height="194"
+                      image={card.coverImage}
+                      alt={card.title}
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: { xs: 300, sm: 400 },
+                        zIndex: 0,
+                      }}
+                    />
+                  </CardActionArea>
+                </Card>
+              </Grid>
             );
           })}
-        </Stack>
+        </Grid>
       )}
     </Stack>
   );
