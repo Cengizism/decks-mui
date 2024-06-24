@@ -22,7 +22,7 @@ export default async function Deck({ params }: Params) {
     return notFound();
   }
 
-  const cards = getCardsByDeck(deck.folderName);
+  const cards = getCardsByDeck(deck.folder);
 
   return (
     <Stack spacing={4}>
@@ -123,6 +123,6 @@ export async function generateStaticParams() {
   const decks = getAllDecks();
 
   return decks.map((deck) => ({
-    slug: deck.folderName,
+    slug: deck.folder,
   }));
 }

@@ -10,7 +10,7 @@ export type CardType = {
 };
 
 export interface DeckType {
-  folderName: string;
+  folder: string;
   title: string;
   description: string;
   cards?: string[];

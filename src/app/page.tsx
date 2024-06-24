@@ -29,7 +29,7 @@ export default function Index() {
                   }}
                 >
                   <CardActionArea
-                    href={`/deck/${deck.folderName}`}
+                    href={`/deck/${deck.folder}`}
                     component={NextLink}
                     sx={{
                       zIndex: 1,

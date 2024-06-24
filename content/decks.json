@@ -1,11 +1,11 @@
 [
   {
-    "folderName": "deck-1",
+    "folder": "deck-1",
     "title": "Deck 1",
     "description": "This is the first deck"
   },
   {
-    "folderName": "deck-2",
+    "folder": "deck-2",
     "title": "Deck 2",
     "description": "This is the second deck"
   }

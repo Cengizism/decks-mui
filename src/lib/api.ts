@@ -1,10 +1,10 @@
-import { join } from "path";
+import path from "path";
 import fs from "fs";
 import matter from "gray-matter";
 import decks from "../../content/decks.json";
 import { CardType, CardSlugType, DeckType } from "@/interfaces/types";
 
-const contentDirectory = join(process.cwd(), "content");
+const contentDirectory = path.join(process.cwd(), "content");
 
 const cache = {
   slugs: [] as CardSlugType[],
@@ -21,31 +21,31 @@ export function getCardSlugs(): CardSlugType[] {
     return cache.slugs;
   }
 
-  cache.slugs = decks.flatMap(({ folderName }) => {
-    const deckPath = join(contentDirectory, folderName);
+  cache.slugs = decks.flatMap(({ folder }) => {
+    const deckPath = path.join(contentDirectory, folder);
     return readDirectory(deckPath).map(slug => ({
       slug: slug.replace(/\.mdx$/, ""),
-      deck: folderName,
+      deck: folder,
     }));
   });
 
   return cache.slugs;
 }
 
-function findDeckFolderNameByCardSlug(slug: string): string | undefined {
+function findDeckfolderByCardSlug(slug: string): string | undefined {
   for (const deck of decks) {
-    const deckPath = join(contentDirectory, deck.folderName);
+    const deckPath = path.join(contentDirectory, deck.folder);
     const cardFiles = readDirectory(deckPath);
 
     if (cardFiles.includes(slug + ".mdx")) {
-      return deck.folderName;
+      return deck.folder;
     }
   }
   return undefined;
 }
 
-export function getDeckTitle(folderName: string): string | undefined {
-  const deck = decks.find((deck: DeckType) => deck.folderName === folderName);
+export function getDeckTitle(folder: string): string | undefined {
+  const deck = decks.find((deck: DeckType) => deck.folder === folder);
   return deck?.title;
 }
 
@@ -60,12 +60,12 @@ export function getCardBySlug(slug: string): CardType | null {
     return cache.cards.get(realSlug) || null;
   }
 
-  const deck = findDeckFolderNameByCardSlug(realSlug);
+  const deck = findDeckfolderByCardSlug(realSlug);
   if (!deck) {
     console.error("Deck not found for slug:", { slug });
     return null;
   }
-  const fullPath = join(contentDirectory, deck, `${realSlug}.mdx`);
+  const fullPath = path.join(contentDirectory, deck, `${realSlug}.mdx`);
 
   try {
     const fileContents = fs.readFileSync(fullPath, "utf8");
@@ -89,20 +89,20 @@ export function getAllCards(): CardType[] {
   return cards;
 }
 
-function readCardFiles(folderName: string): string[] {
-  const deckPath = join(contentDirectory, folderName);
+function readCardFiles(folder: string): string[] {
+  const deckPath = path.join(contentDirectory, folder);
   return readDirectory(deckPath);
 }
 
 export function getAllDecks(): DeckType[] {
   return decks.map(deck => ({
     ...deck,
-    cards: readCardFiles(deck.folderName),
+    cards: readCardFiles(deck.folder),
   }));
 }
 
 export function getDeckBySlug(slug: string): DeckType | null {
-  return decks.find(deck => deck.folderName === slug) || null;
+  return decks.find(deck => deck.folder === slug) || null;
 }
 
 export function getCardsByDeck(deck: string): CardType[] {
