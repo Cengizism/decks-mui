@@ -1,26 +1,47 @@
-import * as React from "react";
-import { getAllDecks } from "@/lib/api";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getAllDecks, getDeckBySlug, getCardsByDeck } from "@/lib/api";
 import {
+  Typography,
+  Stack,
+  Breadcrumbs,
+  Link,
   Card,
   CardActionArea,
   CardHeader,
   CardMedia,
-  Stack,
-  Typography,
   Grid,
 } from "@mui/material";
 import NextLink from "next/link";
+import { HOME_OG_IMAGE_URL } from "@/lib/constants";
 
-export default function Index() {
-  const allDecks = getAllDecks();
+export default async function Deck({ params }: Params) {
+  const deck = getDeckBySlug(params.slug);
+
+  if (!deck) {
+    return notFound();
+  }
+
+  const cards = getCardsByDeck(deck.folderName);
 
   return (
     <Stack spacing={4}>
-      <Typography variant="h2">Decks</Typography>
+      <Typography variant="h2">{deck.title}</Typography>
 
-      {allDecks.length > 0 && (
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link underline="hover" color="inherit" href="/" component={NextLink}>
+          Home
+        </Link>
+        <Typography color="text.primary">{deck.title}</Typography>
+      </Breadcrumbs>
+
+      <article>
+        <Typography variant="body1">{deck.description}</Typography>
+      </article>
+
+      {cards.length > 0 && (
         <Grid container spacing={4}>
-          {allDecks.map((deck, index) => {
+          {cards.map((card, index) => {
             return (
               <Grid item key={index} xs={4}>
                 <Card
@@ -29,14 +50,14 @@ export default function Index() {
                   }}
                 >
                   <CardActionArea
-                    href={`/deck/${deck.folderName}`}
+                    href={`/card/${card.slug}`}
                     component={NextLink}
                     sx={{
                       zIndex: 1,
                     }}
                   >
                     <CardHeader
-                      title={deck.title}
+                      title={card.title}
                       titleTypographyProps={{
                         sx: {
                           fontSize: "1.2rem",
@@ -52,8 +73,8 @@ export default function Index() {
                     <CardMedia
                       component="img"
                       height="194"
-                      // image={deck.coverImage}
-                      // alt={deck.title}
+                      image={card.coverImage}
+                      alt={card.title}
                       sx={{
                         position: "absolute",
                         top: 0,
@@ -61,7 +82,6 @@ export default function Index() {
                         width: "100%",
                         height: { xs: 300, sm: 400 },
                         zIndex: 0,
-                        backgroundColor: "RGBA(0,0,0,0.5)",
                       }}
                     />
                   </CardActionArea>
@@ -73,4 +93,36 @@ export default function Index() {
       )}
     </Stack>
   );
+}
+
+type Params = {
+  params: {
+    slug: string;
+  };
+};
+
+export function generateMetadata({ params }: Params): Metadata {
+  const deck = getDeckBySlug(params.slug);
+
+  if (!deck) {
+    return notFound();
+  }
+
+  const title = `${deck.title} | Alten Decks - Deck`;
+
+  return {
+    title,
+    openGraph: {
+      title,
+      images: [HOME_OG_IMAGE_URL],
+    },
+  };
+}
+
+export async function generateStaticParams() {
+  const decks = getAllDecks();
+
+  return decks.map((deck) => ({
+    slug: deck.folderName,
+  }));
 }

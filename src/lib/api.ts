@@ -52,3 +52,15 @@ export function getCardBySlug(slug: string): CardType | null {
 export function getAllCards(): CardType[] {
   return getCardSlugs().map(({ slug }) => getCardBySlug(slug)).filter(card => card !== null) as CardType[];
 }
+
+export function getAllDecks(): DeckType[] {
+  return decks;
+}
+
+export function getDeckBySlug(slug: string): DeckType | null {
+  return decks.find(deck => deck.folderName === slug) || null;
+}
+
+export function getCardsByDeck(deck: string): CardType[] {
+  return getAllCards().filter(card => card.deck === deck);
+}
