@@ -17,7 +17,15 @@ export function getCardSlugs(): CardSlugType[] {
 }
 
 function findDeckFolderNameByCardSlug(slug: string): string | undefined {
-  return decks.find((deck: DeckType) => deck.cards.includes(slug))?.folderName;
+  for (const deck of decks) {
+    const deckPath = join(contentDirectory, deck.folderName);
+    const cardFiles = fs.readdirSync(deckPath);
+
+    if (cardFiles.includes(slug + ".mdx")) {
+      return deck.folderName;
+    }
+  }
+  return undefined;
 }
 
 export function getDeckTitle(folderName: string): string | undefined {
@@ -53,8 +61,19 @@ export function getAllCards(): CardType[] {
   return getCardSlugs().map(({ slug }) => getCardBySlug(slug)).filter(card => card !== null) as CardType[];
 }
 
+function readCardFiles(folderName: string): string[] {
+  const deckPath = join(contentDirectory, folderName);
+  const cardFiles = fs.readdirSync(deckPath);
+
+  // Optionally filter or transform cardFiles here
+  return cardFiles;
+}
+
 export function getAllDecks(): DeckType[] {
-  return decks;
+  return decks.map(deck => ({
+    ...deck,
+    cards: readCardFiles(deck.folderName)
+  }));
 }
 
 export function getDeckBySlug(slug: string): DeckType | null {
