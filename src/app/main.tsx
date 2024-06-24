@@ -104,7 +104,7 @@ export default function Main(props: { children: React.ReactNode }) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} color="secondary" >
         <Toolbar>
           <IconButton
             color="inherit"
