@@ -7,8 +7,14 @@ import NextLink from "next/link";
 import CoverImage from "@/app/components/cover-image";
 import markdownStyles from "../../../styles/markdown-styles.module.css";
 
+type Params = {
+  params: {
+    slug: string;
+  };
+};
+
 export default async function Card({ params }: Params) {
-  const card = getCardBySlug(params.slug);
+  const card = await getCardBySlug(params.slug);
 
   if (!card) {
     return notFound();
@@ -46,14 +52,8 @@ export default async function Card({ params }: Params) {
   );
 }
 
-type Params = {
-  params: {
-    slug: string;
-  };
-};
-
-export function generateMetadata({ params }: Params): Metadata {
-  const card = getCardBySlug(params.slug);
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const card = await getCardBySlug(params.slug);
 
   if (!card) {
     return notFound();
@@ -65,13 +65,13 @@ export function generateMetadata({ params }: Params): Metadata {
     title,
     openGraph: {
       title,
-      images: [card.ogImage.url],
+      images: card.ogImage ? [card.ogImage.url] : [],
     },
   };
 }
 
 export async function generateStaticParams() {
-  const cards = getAllCards();
+  const cards = await getAllCards();
 
   return cards.map((card) => ({
     slug: card.slug,

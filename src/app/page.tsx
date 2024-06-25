@@ -10,9 +10,10 @@ import {
   Grid,
 } from "@mui/material";
 import NextLink from "next/link";
+import { DeckType } from "@/interfaces/types";
 
-export default function Index() {
-  const allDecks = getAllDecks();
+export default async function Index() {
+  const allDecks = await getAllDecks();
 
   return (
     <Stack spacing={4}>

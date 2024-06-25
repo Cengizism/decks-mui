@@ -15,14 +15,20 @@ import {
 import NextLink from "next/link";
 import { HOME_OG_IMAGE_URL } from "@/lib/constants";
 
+type Params = {
+  params: {
+    slug: string;
+  };
+};
+
 export default async function Deck({ params }: Params) {
-  const deck = getDeckBySlug(params.slug);
+  const deck = await getDeckBySlug(params.slug);
 
   if (!deck) {
     return notFound();
   }
 
-  const cards = getCardsByDeck(deck.folder);
+  const cards = await getCardsByDeck(deck.folder);
 
   return (
     <Stack spacing={4}>
@@ -95,14 +101,8 @@ export default async function Deck({ params }: Params) {
   );
 }
 
-type Params = {
-  params: {
-    slug: string;
-  };
-};
-
-export function generateMetadata({ params }: Params): Metadata {
-  const deck = getDeckBySlug(params.slug);
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const deck = await getDeckBySlug(params.slug);
 
   if (!deck) {
     return notFound();
@@ -120,7 +120,7 @@ export function generateMetadata({ params }: Params): Metadata {
 }
 
 export async function generateStaticParams() {
-  const decks = getAllDecks();
+  const decks = await getAllDecks();
 
   return decks.map((deck) => ({
     slug: deck.folder,

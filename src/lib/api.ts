@@ -1,5 +1,6 @@
 import path from "path";
-import fs from "fs";
+import fs from "fs/promises";
+import { watch } from "fs";
 import matter from "gray-matter";
 import decks from "../../content/decks.json";
 import { CardType, CardSlugType, DeckType } from "@/interfaces/types";
@@ -12,30 +13,35 @@ const cache = {
   decks: decks,
 };
 
-function readDirectory(folderPath: string): string[] {
-  return fs.readdirSync(folderPath);
+// Function to read the contents of a directory
+async function readDirectory(folderPath: string): Promise<string[]> {
+  return await fs.readdir(folderPath);
 }
 
-export function getCardSlugs(): CardSlugType[] {
+// Function to get card slugs
+export async function getCardSlugs(): Promise<CardSlugType[]> {
   if (cache.slugs.length > 0) {
     return cache.slugs;
   }
 
-  cache.slugs = decks.flatMap(({ folder }) => {
+  const slugPromises = decks.map(async ({ folder }) => {
     const deckPath = path.join(contentDirectory, folder);
-    return readDirectory(deckPath).map(slug => ({
+    const slugs = await readDirectory(deckPath);
+    return slugs.map(slug => ({
       slug: slug.replace(/\.mdx$/, ""),
       deck: folder,
     }));
   });
 
+  cache.slugs = (await Promise.all(slugPromises)).flat();
   return cache.slugs;
 }
 
-function findDeckfolderByCardSlug(slug: string): string | undefined {
+// Function to find the deck folder by card slug
+async function findDeckFolderByCardSlug(slug: string): Promise<string | undefined> {
   for (const deck of decks) {
     const deckPath = path.join(contentDirectory, deck.folder);
-    const cardFiles = readDirectory(deckPath);
+    const cardFiles = await readDirectory(deckPath);
 
     if (cardFiles.includes(slug + ".mdx")) {
       return deck.folder;
@@ -44,12 +50,14 @@ function findDeckfolderByCardSlug(slug: string): string | undefined {
   return undefined;
 }
 
+// Function to get the deck title
 export function getDeckTitle(folder: string): string | undefined {
   const deck = decks.find((deck: DeckType) => deck.folder === folder);
   return deck?.title;
 }
 
-export function getCardBySlug(slug: string): CardType | null {
+// Function to get card by slug
+export async function getCardBySlug(slug: string): Promise<CardType | null> {
   if (!slug) {
     console.error("Invalid slug parameter:", { slug });
     return null;
@@ -60,7 +68,7 @@ export function getCardBySlug(slug: string): CardType | null {
     return cache.cards.get(realSlug) || null;
   }
 
-  const deck = findDeckfolderByCardSlug(realSlug);
+  const deck = await findDeckFolderByCardSlug(realSlug);
   if (!deck) {
     console.error("Deck not found for slug:", { slug });
     return null;
@@ -68,7 +76,7 @@ export function getCardBySlug(slug: string): CardType | null {
   const fullPath = path.join(contentDirectory, deck, `${realSlug}.mdx`);
 
   try {
-    const fileContents = fs.readFileSync(fullPath, "utf8");
+    const fileContents = await fs.readFile(fullPath, "utf8");
     const { data, content } = matter(fileContents);
     const card = { ...data, slug: realSlug, content, deck } as CardType;
     cache.cards.set(realSlug, card);
@@ -79,32 +87,73 @@ export function getCardBySlug(slug: string): CardType | null {
   }
 }
 
-export function getAllCards(): CardType[] {
+// Function to get all cards
+export async function getAllCards(): Promise<CardType[]> {
   if (cache.cards.size > 0) {
     return Array.from(cache.cards.values());
   }
 
-  const cards = getCardSlugs().map(({ slug }) => getCardBySlug(slug)).filter(card => card !== null) as CardType[];
+  const slugs = await getCardSlugs();
+  const cardPromises = slugs.map(({ slug }) => getCardBySlug(slug));
+  const cards = (await Promise.all(cardPromises)).filter(card => card !== null) as CardType[];
   cards.forEach(card => card && cache.cards.set(card.slug, card));
   return cards;
 }
 
-function readCardFiles(folder: string): string[] {
+// Function to read card files
+async function readCardFiles(folder: string): Promise<string[]> {
   const deckPath = path.join(contentDirectory, folder);
-  return readDirectory(deckPath);
+  return await readDirectory(deckPath);
 }
 
-export function getAllDecks(): DeckType[] {
-  return decks.map(deck => ({
+// Function to get all decks
+export async function getAllDecks(): Promise<DeckType[]> {
+  const deckPromises = decks.map(async deck => ({
     ...deck,
-    cards: readCardFiles(deck.folder),
+    cards: await readCardFiles(deck.folder),
   }));
+
+  return await Promise.all(deckPromises);
 }
 
-export function getDeckBySlug(slug: string): DeckType | null {
+// Function to get deck by slug
+export async function getDeckBySlug(slug: string): Promise<DeckType | null> {
   return decks.find(deck => deck.folder === slug) || null;
 }
 
-export function getCardsByDeck(deck: string): CardType[] {
-  return getAllCards().filter(card => card.deck === deck);
+// Function to get cards by deck
+export async function getCardsByDeck(deck: string): Promise<CardType[]> {
+  const allCards = await getAllCards();
+  return allCards.filter(card => card.deck === deck);
 }
+
+// Function to watch directory for changes
+function watchDirectory(directory: string) {
+  watch(directory, async (eventType, filename) => {
+    if (filename && eventType === "change" || eventType === "rename") {
+      // Clear caches related to the directory
+      cache.slugs = [];
+      cache.cards.clear();
+
+      // Re-populate caches
+      await getCardSlugs();
+      await getAllCards();
+      console.log(`Cache updated due to changes in ${directory}`);
+    }
+  });
+}
+
+// Start watching all deck directories
+function startWatchingDeckDirectories() {
+  decks.forEach(deck => {
+    const deckPath = path.join(contentDirectory, deck.folder);
+    watchDirectory(deckPath);
+  });
+}
+
+// Initialize cache and start watching directories
+(async () => {
+  await getCardSlugs();
+  await getAllCards();
+  startWatchingDeckDirectories();
+})();
