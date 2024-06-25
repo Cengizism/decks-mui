@@ -13,12 +13,12 @@ const cache = {
   decks: decks,
 };
 
-// Function to read the contents of a directory
+const excludeFiles: string[] = ['.DS_Store'];
 async function readDirectory(folderPath: string): Promise<string[]> {
-  return await fs.readdir(folderPath);
+  const files = await fs.readdir(folderPath);
+  return files.filter(file => !excludeFiles.includes(file));
 }
 
-// Function to get card slugs
 export async function getCardSlugs(): Promise<CardSlugType[]> {
   if (cache.slugs.length > 0) {
     return cache.slugs;
@@ -37,7 +37,6 @@ export async function getCardSlugs(): Promise<CardSlugType[]> {
   return cache.slugs;
 }
 
-// Function to find the deck folder by card slug
 async function findDeckFolderByCardSlug(slug: string): Promise<string | undefined> {
   for (const deck of decks) {
     const deckPath = path.join(contentDirectory, deck.folder);
@@ -50,13 +49,11 @@ async function findDeckFolderByCardSlug(slug: string): Promise<string | undefine
   return undefined;
 }
 
-// Function to get the deck title
 export function getDeckTitle(folder: string): string | undefined {
   const deck = decks.find((deck: DeckType) => deck.folder === folder);
   return deck?.title;
 }
 
-// Function to get card by slug
 export async function getCardBySlug(slug: string): Promise<CardType | null> {
   if (!slug) {
     console.error("Invalid slug parameter:", { slug });
@@ -87,7 +84,6 @@ export async function getCardBySlug(slug: string): Promise<CardType | null> {
   }
 }
 
-// Function to get all cards
 export async function getAllCards(): Promise<CardType[]> {
   if (cache.cards.size > 0) {
     return Array.from(cache.cards.values());
@@ -100,13 +96,11 @@ export async function getAllCards(): Promise<CardType[]> {
   return cards;
 }
 
-// Function to read card files
 async function readCardFiles(folder: string): Promise<string[]> {
   const deckPath = path.join(contentDirectory, folder);
   return await readDirectory(deckPath);
 }
 
-// Function to get all decks
 export async function getAllDecks(): Promise<DeckType[]> {
   const deckPromises = decks.map(async deck => ({
     ...deck,
@@ -116,26 +110,21 @@ export async function getAllDecks(): Promise<DeckType[]> {
   return await Promise.all(deckPromises);
 }
 
-// Function to get deck by slug
 export async function getDeckBySlug(slug: string): Promise<DeckType | null> {
   return decks.find(deck => deck.folder === slug) || null;
 }
 
-// Function to get cards by deck
 export async function getCardsByDeck(deck: string): Promise<CardType[]> {
   const allCards = await getAllCards();
   return allCards.filter(card => card.deck === deck);
 }
 
-// Function to watch directory for changes
 function watchDirectory(directory: string) {
   watch(directory, async (eventType, filename) => {
-    if (filename && eventType === "change" || eventType === "rename") {
-      // Clear caches related to the directory
+    if (filename && (eventType === "change" || eventType === "rename")) {
       cache.slugs = [];
       cache.cards.clear();
 
-      // Re-populate caches
       await getCardSlugs();
       await getAllCards();
       console.log(`Cache updated due to changes in ${directory}`);
@@ -143,7 +132,6 @@ function watchDirectory(directory: string) {
   });
 }
 
-// Start watching all deck directories
 function startWatchingDeckDirectories() {
   decks.forEach(deck => {
     const deckPath = path.join(contentDirectory, deck.folder);
@@ -151,7 +139,6 @@ function startWatchingDeckDirectories() {
   });
 }
 
-// Initialize cache and start watching directories
 (async () => {
   await getCardSlugs();
   await getAllCards();
