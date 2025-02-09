@@ -127,7 +127,7 @@ export default function Main(props: { children: React.ReactNode }) {
             }}
           >
             <Typography variant="h6" noWrap component="div">
-              Alten Decks
+              Decks
             </Typography>
           </Link>
         </Toolbar>

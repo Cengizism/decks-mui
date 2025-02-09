@@ -1,7 +1,5 @@
 # Decks
 
-This is a statically generated learning platform for Alten consultants.
-
 It is based on NextJS, ReactJS, Google Material Design and TypeScript.
 
 The blog posts are stored in `/_posts` as Markdown files with front matter
@@ -34,6 +32,7 @@ pnpm dev
 Some additional notes..
 
 ## TODOS
+
 - Site url ffrom environment variable needs generalization
-- Change openGraph image to Alten Decks logo
+- Change openGraph image to Decks logo
 - Install `eslint` and `prettier` for code formatting

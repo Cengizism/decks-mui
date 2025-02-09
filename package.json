@@ -1,11 +1,11 @@
 {
-  "name": "alten-decks",
+  "name": "decks-mui",
   "version": "0.0.1",
   "private": true,
   "contributors": [
     {
       "name": "Cengiz Ulusoy",
-      "email": "cengiz.ulusoy@alten.nl"
+      "email": "*@gmail.com"
     }],
   "scripts": {
     "dev": "next",

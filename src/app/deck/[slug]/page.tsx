@@ -108,7 +108,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     return notFound();
   }
 
-  const title = `${deck.title} | Alten Decks - Deck`;
+  const title = `${deck.title} | Decks - Deck`;
 
   return {
     title,
